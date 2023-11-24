@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs')
 const { User, Address } = require('../models')
+const { imgurFileHandler } = require('../helpers/file-helpers')
 
 const userServices = {
   signUp: (req, callback) => {
@@ -26,6 +27,25 @@ const userServices = {
           detail: '',
           recevier: '',
           phone: ''
+        })
+      })
+      .then(() => callback(null))
+      .catch(err => callback(err))
+  },
+  putUser: async (req, callback) => {
+    const id = req.headers['user-id']
+    const { name } = req.body
+    if (!name) throw new Error('User name is required!')
+    const { file } = req
+    return Promise.all([
+      await User.findByPk(id),
+      await imgurFileHandler(file)
+    ])
+      .then(([user, filePath]) => {
+        if (!user) throw new Error("User didn't exist!")
+        return user.update({
+          name,
+          image: filePath || user.image
         })
       })
       .then(() => callback(null))

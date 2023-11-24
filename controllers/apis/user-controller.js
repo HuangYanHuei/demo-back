@@ -39,6 +39,9 @@ const userController = {
   signUp: (req, res, next) => {
     userServices.signUp(req, err => err ? next(err) : res.json({ status: 'success' }))
   },
+  putUser: (req, res, next) => {
+    userServices.putUser(req, err => err ? next(err) : res.json({ status: 'success' }))
+  },
   getCurrentUser: (req, res) => {
     return res.json({
       id: req.user.id,
